@@ -32,11 +32,9 @@ We propose **SuperCL**, a novel contrastive learning framework for medical image
 ---
 
 ## News
-
+- **[2026-05-09]** I am excited to present our work SuperCL as a poster at VALSE 2026 in Wuhan.
 - **[2026-02-09]** Paper published in IEEE Transactions on Image Processing (TIP), Vol. 35, 2026!
-- **[2026-02-03]** Paper is online at IEEE Xplore!
-- **[2026-01-17]** Paper accepted by IEEE TIP!
-
+- **[2026-01-17]** Paper accepted by IEEE Transactions on Image Processing (TIP)!
 ---
 
 ## Method Overview
@@ -46,14 +44,14 @@ We propose **SuperCL**, a novel contrastive learning framework for medical image
 SuperCL builds upon a standard CL framework with two branches:
 
 1. **Spatial Invariance Group** → pixel-level projection → **ILCP** → $\mathcal{L}_{intra}$
-2. **Spatial Variance Group** → instance-level projection → **IGCP** → $\mathcal{L}_{inter}$
+2. **Spatial Variance Group** → instance-level projection → **IGCP** → $\mathcal{L}_{inter}$ ($\mathcal{L}_{ins} as baseline CL loss$)
 
 The total loss is:
 
 $$\mathcal{L}_{total} = \lambda_1 \mathcal{L}_{ins} + \lambda_2 \mathcal{L}_{intra} + \lambda_3 \mathcal{L}_{inter}$$
 
 **Key modules:**
-- **ILCP**: Uses SLIC superpixel map to generate pseudo masks; pixels in the same superpixel cluster are treated as positive pairs
+- [**ILCP**](assets/ILCP.png): Uses SLIC superpixel map to generate pseudo masks; pixels in the same superpixel cluster are treated as positive pairs
 - **ASP** (Average SuperPixel Feature Map Generation): Generates a reliable representation for inter-image affinity computation
 - **CCL** (Connected Components Label Generation): Generates a weak label via nearest-neighbor graph and Hoshen-Kopelman algorithm
 
