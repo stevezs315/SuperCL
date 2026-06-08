@@ -11,7 +11,7 @@
 
 **Shuang Zeng, Lei Zhu, Xinliang Zhang, Hangzhou He, Yanye Lu***
 
-*MILab, Department of Biomedical Engineering, Peking University & Georgia Institute of Technology*
+*MILab, Department of Biomedical Engineering, Peking University, Wallace H. Coulter Department of Biomedical Engineering, Georgia Institute of Technology and Emory University*
 
 *\* Corresponding Author: yanye.lu@pku.edu.cn*
 
