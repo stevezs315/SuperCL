@@ -51,7 +51,7 @@ The total loss is:
 $$\mathcal{L}_{total} = \lambda_1 \mathcal{L}_{ins} + \lambda_2 \mathcal{L}_{intra} + \lambda_3 \mathcal{L}_{inter}$$
 
 **Key modules:**
-- [**ILCP**](assets/ILCP.png): Uses SLIC superpixel map to generate pseudo masks; pixels in the same superpixel cluster are treated as positive pairs
+- ![**ILCP**](assets/ILCP.png): Uses SLIC superpixel map to generate pseudo masks; pixels in the same superpixel cluster are treated as positive pairs
 - **ASP** (Average SuperPixel Feature Map Generation): Generates a reliable representation for inter-image affinity computation
 - **CCL** (Connected Components Label Generation): Generates a weak label via nearest-neighbor graph and Hoshen-Kopelman algorithm
 
