@@ -2,10 +2,8 @@
 
 
 [![IEEE TIP](https://img.shields.io/badge/IEEE%20TIP-Paper-blue)](https://ieeexplore.ieee.org/abstract/document/11371598)
-[![DOI](https://img.shields.io/badge/DOI-10.1109%2FTIP.2026.3657233-blue)](https://doi.org/10.1109/TIP.2026.3657233)
 [![GitHub](https://img.shields.io/badge/GitHub-SuperCL-black?logo=github)](https://github.com/stevezs315/SuperCL)
-[![Python](https://img.shields.io/badge/Python-3.8.16-blue?logo=python)](https://python.org)
-
+[![Homepage](https://img.shields.io/badge/Homepage-Project%20Page-brightgreen?logo=github)](https://stevezs315.github.io/)
 
 **Shuang Zeng, Lei Zhu, Xinliang Zhang, Hangzhou He, Yanye Lu***
 
