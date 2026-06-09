@@ -42,7 +42,8 @@ We propose **SuperCL**, a novel contrastive learning framework for medical image
 SuperCL builds upon a standard CL framework with two branches:
 
 1. **Spatial Invariance Group** → pixel-level projection → **ILCP** → $\mathcal{L}_{intra}$
-2. **Spatial Variance Group** → instance-level projection → **IGCP** → $\mathcal{L}_{inter}$ ($\mathcal{L}_{ins}$ as baseline CL loss)
+2. **Spatial Variance Group** → instance-level projection → **IGCP** → $\mathcal{L}_{inter}$ 
+($\mathcal{L}_{ins}$ as baseline CL loss)
 
 The total loss is:
 
