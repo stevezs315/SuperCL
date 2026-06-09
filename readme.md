@@ -1,21 +1,16 @@
-<div align="center">
-
 # SuperCL: Superpixel Guided Contrastive Learning for Medical Image Segmentation Pre-Training
 
-[![IEEE TIP](https://img.shields.io/badge/IEEE%20TIP-Vol.35%202026-blue.svg)](https://ieeexplore.ieee.org/abstract/document/11371598)
-[![DOI](https://img.shields.io/badge/DOI-10.1109%2FTIP.2026.3657233-green.svg)](https://doi.org/10.1109/TIP.2026.3657233)
-[![GitHub](https://img.shields.io/badge/GitHub-SuperCL-black.svg)](https://github.com/stevezs315/SuperCL)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/Python-3.8+-green.svg)](https://python.org)
-
+[IEEE TIP](https://ieeexplore.ieee.org/abstract/document/11371598)
+[DOI](https://doi.org/10.1109/TIP.2026.3657233)
+[GitHub](https://github.com/stevezs315/SuperCL)
+[License](LICENSE)
+[Python](https://python.org)
 
 **Shuang Zeng, Lei Zhu, Xinliang Zhang, Hangzhou He, Yanye Lu***
 
-*MILab, Department of Biomedical Engineering, Peking University, Wallace H. Coulter Department of Biomedical Engineering, Georgia Institute of Technology and Emory University*
+*MILab, Department of Biomedical Engineering, Peking University*
 
-*\* Corresponding Author: yanye.lu@pku.edu.cn*
-
-</div>
+ *Corresponding Author: [yanye.lu@pku.edu.cn](mailto:yanye.lu@pku.edu.cn)*
 
 ---
 
@@ -24,6 +19,7 @@
 Medical image segmentation suffers from limited annotated data. Most existing contrastive learning (CL) methods either focus on instance-level or pixel-to-pixel representations, ignoring characteristics between intra-image similar pixel groups, and rely on manually set thresholds for contrastive pair generation.
 
 We propose **SuperCL**, a novel contrastive learning framework for medical image segmentation pre-training. SuperCL exploits the structural prior and pixel correlation of images via two novel strategies:
+
 - **ILCP** (Intra-image Local Contrastive Pairs Generation): pixel-level supervised CL guided by superpixel pseudo masks
 - **IGCP** (Inter-image Global Contrastive Pairs Generation): instance-level supervised CL with two novel modules ASP and CCL
 
@@ -32,9 +28,11 @@ We propose **SuperCL**, a novel contrastive learning framework for medical image
 ---
 
 ## News
+
 - **[2026-05-09]** I am excited to present our work SuperCL as a poster at VALSE 2026 in Wuhan.
 - **[2026-02-09]** Paper published in IEEE Transactions on Image Processing (TIP), Vol. 35, 2026!
 - **[2026-01-17]** Paper accepted by IEEE Transactions on Image Processing (TIP)!
+
 ---
 
 ## Method Overview
@@ -44,57 +42,39 @@ We propose **SuperCL**, a novel contrastive learning framework for medical image
 SuperCL builds upon a standard CL framework with two branches:
 
 1. **Spatial Invariance Group** → pixel-level projection → **ILCP** → $\mathcal{L}_{intra}$
-2. **Spatial Variance Group** → instance-level projection → **IGCP** → $\mathcal{L}_{inter}$ ($\mathcal{L}_{ins} as baseline CL loss$)
+2. **Spatial Variance Group** → instance-level projection → **IGCP** → $\mathcal{L}*{inter}$ ($\mathcal{L}*{ins}$ as baseline CL loss)
 
 The total loss is:
 
-$$\mathcal{L}_{total} = \lambda_1 \mathcal{L}_{ins} + \lambda_2 \mathcal{L}_{intra} + \lambda_3 \mathcal{L}_{inter}$$
+$$\mathcal{L}*{total} = \lambda_1 \mathcal{L}*{ins} + \lambda_2 \mathcal{L}*{intra} + \lambda_3 \mathcal{L}*{inter}$$
 
 **Key modules:**
+
 - **ILCP**: Uses SLIC superpixel map to generate pseudo masks; pixels in the same superpixel cluster are treated as positive pairs
 - **ASP** (Average SuperPixel Feature Map Generation): Generates a reliable representation for inter-image affinity computation
 - **CCL** (Connected Components Label Generation): Generates a weak label via nearest-neighbor graph and Hoshen-Kopelman algorithm
 
 ---
 
-## Main Results
+---
 
-SuperCL outperforms **12 SOTA methods** across **8 medical image datasets** (4 multi-organ + 4 ROI-based):
+## Table of Contents
 
-| Dataset | Annotation | Previous Best DSC | SuperCL DSC | Improvement |
-|---------|-----------|------------------|------------|------------|
-| MMWHS | 10% | 87.10 | **90.26** | +3.16% |
-| CHAOS | 10% | 63.61 | **69.05** | +5.44% |
-| Spleen | 10% | 73.40 | **81.29** | +7.89% |
-| ACDC | 10% | 84.91 | **86.06** | +1.15% |
-
-> SuperCL with **25% annotations** achieves comparable performance to fully-supervised training with **100% annotations**.
+- [Installation](#installation)
+- [Model Weight Preparation](#model-weight-preparation)
+- [Data Preparation](#data-preparation)
+- [Training](#training)
+- [Inference](#inference)
+- [Citation](#citation)
+- [Acknowledgements](#acknowledgements)
 
 ---
 
 ## Installation
 
-### Requirements
-
-```
-Python >= 3.8
-PyTorch >= 1.10
-CUDA >= 11.1
-scikit-image
-```
-
-### Setup
-
 ```bash
-# Clone the repository
-git clone https://github.com/stevezs315/SuperCL.git
-cd SuperCL
-
-# Create conda environment
-conda create -n supercl python=3.8
-conda activate supercl
-
-# Install dependencies
+conda create -n SuperCL python=3.8.16
+conda activate SuperCL
 pip install -r requirements.txt
 ```
 
@@ -102,25 +82,15 @@ pip install -r requirements.txt
 
 ## Model Weights
 
-Pre-trained model weights will be released soon.
+Pre-trained model weights: 'SuperCL/model_pth'
 
-| Model | Pre-train Dataset | Backbone | Download |
-|-------|------------------|----------|----------|
-| SuperCL-CHD | CHD (CT, 17525 slices) | UNet | Coming soon |
-| SuperCL-BraTS | BraTS2018 (MRI, 39064 slices) | UNet | Coming soon |
-| SuperCL-KiTS | KiTS2019 (CT, 32332 slices) | UNet | Coming soon |
 
-Download and place weights in:
+| Model         | Pre-train Dataset             | Backbone |
+| ------------- | ----------------------------- | -------- |
+| SuperCL_CHD   | CHD (CT, 17525 slices)        | UNet     |
+| SuperCL_BraTS | BraTS2018 (MRI, 39064 slices) | UNet     |
+| SuperCL_KiTS  | KiTS2019 (CT, 32332 slices)   | UNet     |
 
-```
-checkpoints/
-├── SuperCL_CHD/
-│   └── pretrained.pth
-├── SuperCL_BraTS/
-│   └── pretrained.pth
-└── SuperCL_KiTS/
-    └── pretrained.pth
-```
 
 ---
 
@@ -128,96 +98,119 @@ checkpoints/
 
 ### Pre-training Datasets (Upstream, Unlabeled)
 
-| Dataset | Modality | Size | Usage |
-|---------|----------|------|-------|
-| CHD | CT | 68 volumes / 17525 slices | Multi-organ pre-training |
-| BraTS2018 | MRI | 351 patients / 39064 slices | MRI pre-training |
-| KiTS2019 | CT | 210 patients / 32332 slices | ROI CT pre-training |
+
+| Dataset   | Modality | Size                        | Usage                                |
+| --------- | -------- | --------------------------- | ------------------------------------ |
+| CHD       | CT       | 17525 slices   | Multi-organ CT pre-training        |
+| BraTS2018 | MRI      | 39064 slices | MRI (Multi-organ / ROI) pre-training |
+| KiTS2019  | CT       | 32332 slices | ROI CT pre-training                  |
+
+
+- Congenital Heart Disease (CHD) dataset, [link](https://www.kaggle.com/datasets/xiaoweixumedicalai/chd68-segmentation-dataset-miccai19)
+- BraTS2018, [link](https://www.med.upenn.edu/sbia/brats2018/data.html)
+- KiTS, [link](https://drive.google.com/file/d/1EuGqW59itnVXndiqOopxDSvmNIVk4ijV/view?usp=drive_link)
 
 ### Fine-tuning Datasets (Downstream)
 
-| Dataset | Modality | Task | Size |
-|---------|----------|------|------|
-| ACDC | MRI | Multi-organ (LV/RV/Myo) | 100 patients |
-| MMWHS | CT | Multi-organ (7 structures) | 20 patients |
-| HVSMR | MRI | Multi-organ (Blood pool/Myo) | 10 patients |
-| CHAOS | MRI | Multi-organ (4 regions) | 20 patients |
-| MSD-Heart | MRI | ROI (Left atrium) | 20 patients |
-| MSD-Hippocampus | MRI | ROI (Hippocampus) | 260 patients |
-| MSD-Spleen | CT | ROI (Spleen) | 41 patients |
-| ISIC2018 | Dermoscopy | ROI (Skin lesion) | 2594 images |
 
-### Data Structure
+| Dataset         | Modality   | Task                         | Size         |
+| --------------- | ---------- | ---------------------------- | ------------ |
+| ACDC            | MRI        | Multi-organ (LV/RV/Myo)      | 100 patients |
+| MMWHS           | CT         | Multi-organ (7 structures)   | 20 patients  |
+| HVSMR           | MRI        | Multi-organ (Blood pool/Myo) | 10 patients  |
+| CHAOS           | MRI        | Multi-organ (4 regions)      | 20 patients  |
+| MSD-Heart       | MRI        | ROI (Left atrium)            | 20 patients  |
+| MSD-Hippocampus | MRI        | ROI (Hippocampus)            | 260 patients |
+| MSD-Spleen      | CT         | ROI (Spleen)                 | 41 patients  |
+| ISIC2018        | Dermoscopy | ROI (Skin lesion)            | 2594 images  |
+
+ - ACDC, [link](https://www.creatis.insa-lyon.fr/Challenge/acdc/databases.html)
+ - MMWHS, [link](https://zmiclab.github.io/zxh/0/mmwhs/)
+ - HVSMR, [link](http://segchd.csail.mit.edu/)
+ - CHAOS, [link](https://chaos.grand-challenge.org/Combined_Healthy_Abdominal_Organ_Segmentation/)
+ - MSD, [link](http://medicaldecathlon.com/)
+ - ISIC2018, [link](https://challenge.isic-archive.com/landing/2018/)
+
+### Pre-Processing
+
+Use the `generate_xxx.py` in the `dataset` folder to preprocess the dataset, convert the original data into .npy/.png for training and testing.
 
 ```
-data/
-├── upstream/
-│   ├── CHD/
-│   ├── BraTS2018/
-│   └── KiTS2019/
-└── downstream/
-    ├── ACDC/
-    ├── MMWHS/
-    ├── HVSMR/
-    ├── CHAOS/
-    ├── MSD_Heart/
-    ├── MSD_Hippocampus/
-    ├── MSD_Spleen/
-    └── ISIC2018/
+# convert the xxx dataset
+python generate_xxx.py -indir raw_image_dir -labeled_outdir save_dir_for_unlabeled_data -unlabeled_outdir save_dir_for_unlabeled_data
 ```
 
 ---
 
 ## Pre-training
 
+*bash pretrain.sh*
+
 ```bash
 # Pre-train on CHD dataset (CT, for multi-organ segmentation)
-python pretrain.py \
-    --dataset CHD \
-    --data_path data/upstream/CHD \
-    --output_dir checkpoints/SuperCL_CHD \
-    --epochs 100 \
-    --batch_size 16 \
-    --lr 0.1 \
-    --temperature 0.1 \
-    --lambda1 1.0 \
-    --lambda2 1.0 \
-    --lambda3 0.5 \
-    --superpixel_num 100 \
-    --superpixel_compactness 10
 
-# Pre-train on BraTS2018 (MRI)
-python pretrain.py \
-    --dataset BraTS \
-    --data_path data/upstream/BraTS2018 \
-    --output_dir checkpoints/SuperCL_BraTS \
-    --epochs 100
+CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nnodes=1 --nproc_per_node=2 --master_port 21678 \
+train_contrast.py --device cuda:0 \
+--model_name UNet2D_SCL --ssl_method GPSCL \
+--dataset chd --batch_size 16 --checkpoint_pretrain_interval 10 --epochs 100 \
+--data_dir "datasets/chd/out_unlabeled/" --do_contrast --lr 0.01 \
+--experiment_name your_experiment_name_ --save SuperCL --slice_threshold 0.1 \
+--temp 0.1 --patch_size 512 512 --initial_filter_size 32 --classes 512 \
+--contrastive_method 'superpixel_pcl' --GPU_Name '0,1 of M7' --scale_factor 0.25 \
+--pixel_use --parallel DDP --n_segments 100 --compactness 10 --super_pixel \
+--reduce_memory_mode 'sample' --stride 16 --AMP --lambda_sp_intra 1.0 --lambda_wcl 0.5 \
+
+# Pre-train on BraTS2018 (MRI for multi-organ / ROI segmentation)
+
+CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nnodes=1 --nproc_per_node=2 --master_port 21182 \
+train_contrast.py --device cuda:0 \
+--model_name UNet2D_SCL --ssl_method GPSCL \
+--dataset BraTS --batch_size 32 --checkpoint_pretrain_interval 10 --epochs 100 \
+--data_dir "datasets/BraTS_unlabeled/unlabeled" --do_contrast --lr 0.01 \
+--experiment_name your_experiment_name_ --save SuperCL --slice_threshold 0.1 \
+--temp 0.1 --patch_size 192 192 --initial_filter_size 32 --classes 512 \
+--contrastive_method 'superpixel_pcl' --GPU_Name '0,1 of M7' --scale_factor 0.25 \
+--pixel_use --parallel DDP --n_segments 100 --compactness 10 --super_pixel \
+--reduce_memory_mode 'sample' --stride 1 --AMP \
+--mode pretrain --lambda_sp_intra 1.0 --lambda_wcl 0.5 \
 
 # Pre-train on KiTS2019 (CT, for ROI segmentation)
-python pretrain.py \
-    --dataset KiTS \
-    --data_path data/upstream/KiTS2019 \
-    --output_dir checkpoints/SuperCL_KiTS \
-    --epochs 100
+
+CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nnodes=1 --nproc_per_node=2 --master_port 25634 \
+train_contrast.py --device cuda:0 \
+--model_name UNet2D_SCL --ssl_method GPSCL \
+--dataset KiTS --batch_size 16 --checkpoint_pretrain_interval 10 --epochs 100 \
+--data_dir "/datasets/KITS/" --do_contrast --lr 0.01 \
+--experiment_name your_experiment_name_ --save SuperCL --slice_threshold 0.1 \
+--temp 0.1 --patch_size 512 512 --initial_filter_size 32 --classes 512 \
+--contrastive_method 'superpixel_pcl' --GPU_Name '0,1 of M7' --scale_factor 0.25 \
+--pixel_use --parallel DDP --n_segments 100 --compactness 10 --super_pixel \
+--reduce_memory_mode 'sample' --stride 16 --AMP --sp_method 'SLIC' \
+--lambda_sp_intra 1.0 --lambda_wcl 0.5 \
+
 ```
 
 ### Key Pre-training Parameters
 
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| `--epochs` | 100 | Pre-training epochs |
-| `--batch_size` | 16 | Batch size per GPU |
-| `--lr` | 0.1 | Initial learning rate (cosine decay to 0) |
-| `--temperature` | 0.1 | Temperature τ for contrastive loss |
-| `--lambda1` | 1.0 | Weight for $\mathcal{L}_{ins}$ |
-| `--lambda2` | 1.0 | Weight for $\mathcal{L}_{intra}$ (ILCP) |
-| `--lambda3` | 0.5 | Weight for $\mathcal{L}_{inter}$ (IGCP) |
-| `--superpixel_num` | 100 | Number of superpixel clusters (K) |
-| `--superpixel_compactness` | 10 | SLIC compactness parameter |
+
+| Parameter                  | Value | Description                               |
+| -------------------------- | ----- | ----------------------------------------- |
+| `--epochs`                 | 100   | Pre-training epochs                       |
+| `--batch_size`             | 16    | Batch size per GPU                        |
+| `--lr`                     | 0.1   | Initial learning rate (cosine decay to 0) |
+| `--temperature`            | 0.1   | Temperature τ for contrastive loss        |
+| `--lambda1`                | 1.0   | Weight for $\mathcal{L}_{ins}$            |
+| `--lambda2`                | 1.0   | Weight for $\mathcal{L}_{intra}$ (ILCP)   |
+| `--lambda3`                | 0.5   | Weight for $\mathcal{L}_{inter}$ (IGCP)   |
+| `--superpixel_num`         | 100   | Number of superpixel clusters (K)         |
+| `--superpixel_compactness` | 10    | SLIC compactness parameter                |
+
 
 ---
 
 ## Fine-tuning
+
+*bash finetune.sh*
 
 ```bash
 # Fine-tune on ACDC with 10% annotations
@@ -242,34 +235,6 @@ python finetune.py \
     --batch_size 5 \
     --lr 5e-4
 ```
-
-### Pre-training → Fine-tuning Mapping
-
-| Fine-tuning Dataset | Modality | Pre-training Dataset |
-|--------------------|----------|---------------------|
-| ACDC / MMWHS | CT/MRI | CHD (CT) / BraTS (MRI) |
-| HVSMR / CHAOS | MRI | BraTS (MRI) |
-| Spleen / ISIC | CT/Dermoscopy | KiTS (CT) |
-| Heart / Hippocampus | MRI | BraTS (MRI) |
-
----
-
-## Evaluation
-
-```bash
-# Evaluate on a single dataset
-python eval.py \
-    --model_path output/SuperCL_ACDC_10pct/best.pth \
-    --dataset ACDC \
-    --data_path data/downstream/ACDC
-
-# Evaluate on all 8 downstream datasets
-bash scripts/eval_all.sh
-```
-
-Metrics: **DSC** (↑), **JC** (↑), **HD95** (↓), **ASD** (↓)
-
----
 
 ## Project Structure
 
@@ -305,24 +270,24 @@ SuperCL/
 If you find SuperCL useful in your research, please cite our paper:
 
 ```bibtex
-@article{zeng2026supercl,
-  title     = {SuperCL: Superpixel Guided Contrastive Learning for Medical Image Segmentation Pre-Training},
-  author    = {Zeng, Shuang and Zhu, Lei and Zhang, Xinliang and He, Hangzhou and Lu, Yanye},
-  journal   = {IEEE Transactions on Image Processing},
-  volume    = {35},
-  pages     = {1636--1651},
-  year      = {2026},
-  publisher = {IEEE},
-  doi       = {10.1109/TIP.2026.3657233}
-}
+@ARTICLE{supercl,
+  author={Zeng, Shuang and Zhu, Lei and Zhang, Xinliang and He, Hangzhou and Lu, Yanye},
+  journal={IEEE Transactions on Image Processing}, 
+  title={SuperCL: Superpixel Guided Contrastive Learning for Medical Image Segmentation Pre-Training}, 
+  year={2026},
+  volume={35},
+  number={},
+  pages={1636-1651},
+  keywords={Image segmentation;Contrastive learning;Annotations;Feature extraction;Training;Spleen;Image edge detection;Costs;Correlation;Chaos;Medical image segmentation;self-supervised learning;contrastive learning;superpixel},
+  doi={10.1109/TIP.2026.3657233}}
 ```
 
 ---
 
 ## Contact
 
-- **Shuang Zeng** (First Author): MILab, Peking University & Georgia Institute of Technology
-- **Yanye Lu** (Corresponding Author): yanye.lu@pku.edu.cn
+- **Shuang Zeng** (First Author): [stevezs@pku.edu.cn](mailto:stevezs@pku.edu.cn)
+- **Yanye Lu** (Corresponding Author): [yanye.lu@pku.edu.cn](mailto:yanye.lu@pku.edu.cn)
 
 For questions and issues, please open a [GitHub Issue](https://github.com/stevezs315/SuperCL/issues).
 
@@ -330,17 +295,6 @@ For questions and issues, please open a [GitHub Issue](https://github.com/stevez
 
 ## Acknowledgement
 
-This work was supported by:
-- National Natural Science Foundation of China (Grant 82371112, 62501020)
-- National Key Research and Development Program of China (Grant 2025YFA1805700)
-- Science Foundation of Peking University Cancer Hospital (Grant JC202505)
-- China National Postdoctoral Program for Innovative Talents (Grant BX20250368)
-- Peking University Medicine Plus X Pilot Program
-
-We thank the following open-source works: [UNet](https://github.com/milesial/Pytorch-UNet), [SimCLR](https://github.com/google-research/simclr), [WCL](https://github.com/mingkai-zheng/WCL), [PCL](https://github.com/dungzb/PCL_medical).
+This codebase builds upon [PCL](https://github.com/dewenzeng/positional_cl). We thank the authors for their excellent work and for releasing their code.
 
 ---
-
-## License
-
-This project is released under the [MIT License](LICENSE).
