@@ -1,10 +1,16 @@
 # SuperCL: Superpixel Guided Contrastive Learning for Medical Image Segmentation Pre-Training
 
-[IEEE TIP](https://ieeexplore.ieee.org/abstract/document/11371598)
+<!-- [IEEE TIP](https://ieeexplore.ieee.org/abstract/document/11371598)
 [DOI](https://doi.org/10.1109/TIP.2026.3657233)
 [GitHub](https://github.com/stevezs315/SuperCL)
 [License](LICENSE)
-[Python](https://python.org)
+[Python](https://python.org) -->
+[![IEEE TIP](https://img.shields.io/badge/IEEE%20TIP-Paper-blue)](https://ieeexplore.ieee.org/abstract/document/11371598)
+[![DOI](https://img.shields.io/badge/DOI-10.1109%2FTIP.2026.3657233-blue)](https://doi.org/10.1109/TIP.2026.3657233)
+[![GitHub](https://img.shields.io/badge/GitHub-SuperCL-black?logo=github)](https://github.com/stevezs315/SuperCL)
+[![License](https://img.shields.io/github/license/stevezs315/SuperCL)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)](https://python.org)
+
 
 **Shuang Zeng, Lei Zhu, Xinliang Zhang, Hangzhou He, Yanye Lu***
 
@@ -189,22 +195,6 @@ train_contrast.py --device cuda:0 \
 --lambda_sp_intra 1.0 --lambda_wcl 0.5 \
 
 ```
-
-### Key Pre-training Parameters
-
-
-| Parameter                  | Value | Description                               |
-| -------------------------- | ----- | ----------------------------------------- |
-| `--epochs`                 | 100   | Pre-training epochs                       |
-| `--batch_size`             | 16    | Batch size per GPU                        |
-| `--lr`                     | 0.1   | Initial learning rate (cosine decay to 0) |
-| `--temperature`            | 0.1   | Temperature τ for contrastive loss        |
-| `--lambda1`                | 1.0   | Weight for $\mathcal{L}_{ins}$            |
-| `--lambda2`                | 1.0   | Weight for $\mathcal{L}_{intra}$ (ILCP)   |
-| `--lambda3`                | 0.5   | Weight for $\mathcal{L}_{inter}$ (IGCP)   |
-| `--superpixel_num`         | 100   | Number of superpixel clusters (K)         |
-| `--superpixel_compactness` | 10    | SLIC compactness parameter                |
-
 
 ---
 
