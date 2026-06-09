@@ -1,15 +1,10 @@
 # SuperCL: Superpixel Guided Contrastive Learning for Medical Image Segmentation Pre-Training
 
-<!-- [IEEE TIP](https://ieeexplore.ieee.org/abstract/document/11371598)
-[DOI](https://doi.org/10.1109/TIP.2026.3657233)
-[GitHub](https://github.com/stevezs315/SuperCL)
-[License](LICENSE)
-[Python](https://python.org) -->
+
 [![IEEE TIP](https://img.shields.io/badge/IEEE%20TIP-Paper-blue)](https://ieeexplore.ieee.org/abstract/document/11371598)
 [![DOI](https://img.shields.io/badge/DOI-10.1109%2FTIP.2026.3657233-blue)](https://doi.org/10.1109/TIP.2026.3657233)
 [![GitHub](https://img.shields.io/badge/GitHub-SuperCL-black?logo=github)](https://github.com/stevezs315/SuperCL)
-[![License](https://img.shields.io/github/license/stevezs315/SuperCL)](LICENSE)
-[![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)](https://python.org)
+[![Python](https://img.shields.io/badge/Python-3.8.16-blue?logo=python)](https://python.org)
 
 
 **Shuang Zeng, Lei Zhu, Xinliang Zhang, Hangzhou He, Yanye Lu***
