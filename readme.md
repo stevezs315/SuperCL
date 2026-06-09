@@ -3,7 +3,8 @@
 
 [![IEEE TIP](https://img.shields.io/badge/IEEE%20TIP-Paper-blue)](https://ieeexplore.ieee.org/abstract/document/11371598)
 [![GitHub](https://img.shields.io/badge/GitHub-SuperCL-black?logo=github)](https://github.com/stevezs315/SuperCL)
-[![Homepage](https://img.shields.io/badge/Homepage-Project%20Page-brightgreen?logo=github)](https://stevezs315.github.io/)
+[![Homepage](https://img.shields.io/badge/-Homepage-brightgreen?logo=github)](https://stevezs315.github.io/)
+
 
 **Shuang Zeng, Lei Zhu, Xinliang Zhang, Hangzhou He, Yanye Lu***
 
@@ -41,7 +42,7 @@ We propose **SuperCL**, a novel contrastive learning framework for medical image
 SuperCL builds upon a standard CL framework with two branches:
 
 1. **Spatial Invariance Group** → pixel-level projection → **ILCP** → $\mathcal{L}_{intra}$
-2. **Spatial Variance Group** → instance-level projection → **IGCP** → $\mathcal{L}*{inter}$ ($\mathcal{L}*{ins}$ as baseline CL loss)
+2. **Spatial Variance Group** → instance-level projection → **IGCP** → $\mathcal{L}_{inter}$ ($\mathcal{L}_{ins}$ as baseline CL loss)
 
 The total loss is:
 
