@@ -43,14 +43,14 @@ class MMWHS(Dataset):
             img, label = self.prepare_supervised(img, label)
             return img, label
         else:
-            # all_data = np.load(self.files[index])['data']
-            # img = all_data[0].astype(np.float32)  
-            # img[img < 0] = 0
-            # mean = np.mean(img)
-            # std = np.std(img)
-            # img -= mean
-            # img /= std
-            # label = all_data[1].astype(np.float32)
+                                                           
+                                                    
+                              
+                                 
+                               
+                         
+                        
+                                                    
             all_data = np.load(self.files[index])['data']
             img = all_data[0].astype(np.float32)  
             img -= self.means[index]
@@ -58,13 +58,13 @@ class MMWHS(Dataset):
             label = all_data[1].astype(np.float32)
             return img[None], label[None]
             
-    # this function for normal supervised training
+                                                  
     def prepare_supervised(self, img, label):
         if self.purpose == 'train':
-            # pad image
+                       
             img, coord = pad_and_or_crop(img, self.patch_size, mode='random')
             label, _  = pad_and_or_crop(label, self.patch_size, mode='fixed', coords=coord)
-            # the image and label should be [batch, c, x, y, z], this is the adapatation for using batchgenerators :)
+                                                                                                                     
             data_dict = {'data':img[None, None], 'seg':label[None, None]}
             tr_transforms = []
             tr_transforms.append(MirrorTransform((0, 1)))
@@ -80,7 +80,7 @@ class MMWHS(Dataset):
             label = data_dict.get('seg')[0]
             return img, label
         else:
-            # pad image
+                       
             img, coord = pad_and_or_crop(img, self.patch_size, mode='centre')
             label, _  = pad_and_or_crop(label, self.patch_size, mode='fixed', coords=coord)
             return img[None], label[None]

@@ -3,7 +3,7 @@ import torch
 from torch.utils.data import DataLoader, Dataset
 from torchvision.transforms import RandomCrop
 import torchvision.transforms.functional as F_transforms
-# from torchvision.transforms.functional import InterpolationMode
+                                                                 
 from batchgenerators.utilities.file_and_folder_operations import *
 import numpy as np
 import os
@@ -11,6 +11,9 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from glob import glob
 from torchvision import transforms
+from skimage.segmentation import slic
+from PIL import Image
+
 
 def padding(img, dst_w, dst_h):
     width, height = F_transforms.get_image_size(img)
@@ -18,14 +21,14 @@ def padding(img, dst_w, dst_h):
     if width < dst_w:
         pad_left = (dst_w-width)//2
         pad_right = math.ceil((dst_w-width)/2)
-        # pad the height if needed
+                                  
     if height < dst_h:
         pad_top = (dst_h - height) // 2
         pad_bottom = math.ceil((dst_h - height) / 2)
     paddings = [pad_left, pad_top, pad_right, pad_bottom]
     img = F_transforms.pad(img, paddings, 0, 'constant')
 
-    # crop the outers
+                     
     if width > dst_w or height > dst_h:
         img = F_transforms.resize(img,[dst_h,dst_w],interpolation=InterpolationMode.BICUBIC)
     return img
@@ -33,41 +36,96 @@ def padding(img, dst_w, dst_h):
 class BraTS(Dataset):
     def __init__(self, keys, args, purpose='train', data_split=0, dstw=192, dsth=192):
 
-        #----传入参数-----#
+                       
 
         self.data_dir = args.data_dir
         self.mode = args.mode
        
-        # self.data_list = glob(os.path.join(self.data_dir, 'HGG', 'HGG*')) + \
-        # glob(os.path.join(self.data_dir, 'LGG', 'LGG*'))
+                                                                               
+                                                          
         self.files = []
         self.slice_position = []
         self.partition = []
         self.purpose = purpose
         self.width = dstw
         self.height = dsth
+        self.superpixel = args.super_pixel
+        self.sp_method = args.sp_method
+        self.n_segments = args.n_segments
+        self.compactness = args.compactness
+        self.ssl_method = args.ssl_method
+        self.sp_method = args.sp_method
+        self.sp_number = args.sp_number
+        self.sp_map = []
+        self.sp_map_2 = []
+        self.sp_map_3 = []
+        self.level_num = args.level_num
+                                                                                                                                     
         self.img_color = transforms.ColorJitter(brightness=0.2)
+        self.JCL_version2 = args.JCL_version2
         if args.mode == 'finetune':
-            for idx in range(0, len(keys)):
-                key = keys[idx]
-                dir_name = ''
-                if idx < data_split:
-                    frames = subfiles(os.path.join(self.data_dir, 'HGG', 'patient_{}'.format(key)), False, None, ".npy", True)
-                    if len(frames) == 0:
-                        print("Not HGG files!")
-                        raise ValueError
-                    dir_name = 'HGG'
-                else:
-                    frames = subfiles(os.path.join(self.data_dir, 'LGG', 'patient_{}'.format(key)), False, None, ".npy", True)
-                    if len(frames) == 0:
-                        print("Not LGG files!")
-                        raise ValueError
-                    dir_name = 'LGG'
-                frames.sort()
-                i = 0
-                for frame in frames:
-                    self.files.append(os.path.join(self.data_dir, dir_name, 'patient_{}'.format(key), frame))
-                    i = i + 1
+            if self.ssl_method in ['LPCL']:
+                for idx in range(0, len(keys)):
+                    key = keys[idx]
+                    dir_name = ''
+                    if idx < data_split:
+                        frames = subfiles(os.path.join(self.data_dir, 'HGG', '{}'.format(key)), False, None, ".npy", True)
+                        if len(frames) == 0:
+                            print("Not HGG files!")
+                            raise ValueError
+                        dir_name = 'HGG'
+                    else:
+                        frames = subfiles(os.path.join(self.data_dir, 'LGG', '{}'.format(key)), False, None, ".npy", True)
+                        if len(frames) == 0:
+                            print("Not LGG files!")
+                            raise ValueError
+                        dir_name = 'LGG'
+                    frames.sort()
+                    i = 0
+                    for frame in frames:
+                        self.files.append(os.path.join(self.data_dir, dir_name, '{}'.format(key), frame))
+
+                                                           
+                        self.slice_position.append(float(i+1)/len(frames))
+                        part = len(frames) / 4.0
+                        if part - int(part) >= 0.5:
+                            part = int(part + 1)
+                        else:
+                            part = int(part)
+                        self.partition.append(max(0,min(int(i//part),3)+1))
+                        i = i + 1
+
+            else:
+                for idx in range(0, len(keys)):
+                    key = keys[idx]
+                    dir_name = ''
+                    if idx < data_split:
+                        frames = subfiles(os.path.join(self.data_dir, 'HGG', 'patient_{}'.format(key)), False, None, ".npy", True)
+                        if len(frames) == 0:
+                            print("Not HGG files!")
+                            raise ValueError
+                        dir_name = 'HGG'
+                    else:
+                        frames = subfiles(os.path.join(self.data_dir, 'LGG', 'patient_{}'.format(key)), False, None, ".npy", True)
+                        if len(frames) == 0:
+                            print("Not LGG files!")
+                            raise ValueError
+                        dir_name = 'LGG'
+                    frames.sort()
+                    i = 0
+                    for frame in frames:
+                        self.files.append(os.path.join(self.data_dir, dir_name, 'patient_{}'.format(key), frame))
+
+                                                           
+                        self.slice_position.append(float(i+1)/len(frames))
+                        part = len(frames) / 4.0
+                        if part - int(part) >= 0.5:
+                            part = int(part + 1)
+                        else:
+                            part = int(part)
+                        self.partition.append(max(0,min(int(i//part),3)+1))
+                        i = i + 1
+
             
         elif self.mode == 'pretrain':
             for idx in range(0, len(keys)):
@@ -85,9 +143,83 @@ class BraTS(Dataset):
                         part = int(part)
                     self.partition.append(max(0,min(int(i//part),3)+1))
                     i = i + 1
-            
-            # self.files = glob(os.path.join(self.data_dir, 'HGG', 'HGG*')) + \
-            #                 glob(os.path.join(self.data_dir, 'LGG', 'LGG*'))
+
+                   
+                if self.sp_method in ['SH']:
+                    sp_data_dir = os.path.join('/mnt/nasv3/zs/datasets/BraTS2D/', self.sp_method)
+                    frames = os.listdir(os.path.join(sp_data_dir, key))
+                                                                               
+                                                                              
+                    if self.sp_number == 128:
+
+                        filtered_frames = [frame for frame in frames if '128' in frame]
+                        filtered_frames.sort()
+                        for frame in filtered_frames:     
+                            self.sp_map.append(os.path.join(sp_data_dir, key, frame))
+
+                    if self.sp_number == 64:
+
+                        filtered_frames = [frame for frame in frames if '64' in frame]
+                        filtered_frames.sort()
+                        for frame in filtered_frames:     
+                            self.sp_map.append(os.path.join(sp_data_dir, key, frame))
+                        
+                        filtered_frames_2 = [frame for frame in frames if '128' in frame]
+                        filtered_frames_2.sort()
+                        for frame in filtered_frames_2:     
+                            self.sp_map_2.append(os.path.join(sp_data_dir, key, frame)) 
+
+
+                    if self.sp_number == 32:
+
+                        filtered_frames = [frame for frame in frames if '32' in frame]
+                        filtered_frames.sort()
+                        for frame in filtered_frames:     
+                            self.sp_map.append(os.path.join(sp_data_dir, key, frame))
+
+                        filtered_frames_2 = [frame for frame in frames if '64' in frame]
+                        filtered_frames_2.sort()
+                        for frame in filtered_frames_2:     
+                            self.sp_map_2.append(os.path.join(sp_data_dir, key, frame))
+
+                        filtered_frames_3 = [frame for frame in frames if '128' in frame]
+                        filtered_frames_3.sort()
+                        for frame in filtered_frames_3:     
+                            self.sp_map_3.append(os.path.join(sp_data_dir, key, frame))
+                    
+                    if self.sp_number == 16:
+
+                        filtered_frames = [frame for frame in frames if '16' in frame]
+                        filtered_frames.sort()
+                        for frame in filtered_frames:     
+                            self.sp_map.append(os.path.join(sp_data_dir, key, frame))
+
+                        filtered_frames_2 = [frame for frame in frames if '32' in frame]
+                        filtered_frames_2.sort()
+                        for frame in filtered_frames_2:     
+                            self.sp_map_2.append(os.path.join(sp_data_dir, key, frame))
+
+                        filtered_frames_3 = [frame for frame in frames if '64' in frame]
+                        filtered_frames_3.sort()
+                        for frame in filtered_frames_3:     
+                            self.sp_map_3.append(os.path.join(sp_data_dir, key, frame))
+                    
+                    if self.sp_number == 8:
+
+                        filtered_frames = [frame for frame in frames if '8' in frame]
+                        filtered_frames.sort()
+                        for frame in filtered_frames:     
+                            self.sp_map.append(os.path.join(sp_data_dir, key, frame))
+
+                        filtered_frames_2 = [frame for frame in frames if '16' in frame]
+                        filtered_frames_2.sort()
+                        for frame in filtered_frames_2:     
+                            self.sp_map_2.append(os.path.join(sp_data_dir, key, frame))
+
+                        filtered_frames_3 = [frame for frame in frames if '32' in frame]
+                        filtered_frames_3.sort()
+                        for frame in filtered_frames_3:     
+                            self.sp_map_3.append(os.path.join(sp_data_dir, key, frame))
                     
 
 
@@ -101,14 +233,14 @@ class BraTS(Dataset):
         if width < dst_w:
             pad_left = (dst_w-width)//2
             pad_right = math.ceil((dst_w-width)/2)
-            # pad the height if needed
+                                      
         if height < dst_h:
             pad_top = (dst_h - height) // 2
             pad_bottom = math.ceil((dst_h - height) / 2)
         paddings = [pad_left, pad_top, pad_right, pad_bottom]
         img = F_transforms.pad(img, paddings, 0, 'constant')
 
-        # crop the outers
+                         
         if width > dst_w or height > dst_h:
             img = F_transforms.resize(img,[dst_h,dst_w],interpolation=InterpolationMode.BICUBIC)
         return img
@@ -123,7 +255,7 @@ class BraTS(Dataset):
         if torch.std(slice) == 0 or torch.std(slice_nonzero) == 0:
             return slice
         else:
-            # tmp = (slice - torch.mean(slice)) / torch.std(slice)
+                                                                  
             tmp = (slice-slice.min())/(slice.max()-slice.min())
             return tmp
 
@@ -138,6 +270,10 @@ class BraTS(Dataset):
         return z_scored_data
     
     def transform(self, img):
+        
+        
+        
+        
         tr_transforms1 = transforms.Compose([
                     transforms.RandomVerticalFlip(),
                     transforms.RandomHorizontalFlip(),
@@ -149,10 +285,11 @@ class BraTS(Dataset):
                     transforms.RandomHorizontalFlip(),
                     transforms.RandomAffine(degrees=(-20,20),translate=(0.1,0.1),
                                  scale=(0.9,1.1), shear=(-0.2,0.2))])
-                    # transforms.ElasticTransform(alpha=720.0, sigma=24.0)])
+                                                                            
 
         img1 = tr_transforms1(img)
         img2 = tr_transforms2(img)
+        
         return img1, img2
     
     def __getitem__(self, index):
@@ -160,43 +297,145 @@ class BraTS(Dataset):
         data = np.load(self.files[index])
         data = torch.tensor(data)
         data = padding(data, dst_w=self.width, dst_h=self.height)
-        # print("data shape: {}".format(data.shape))
+                                                    
         if self.mode == 'pretrain':
-            #前四个模态
+                  
             image  = data[:4, :].squeeze(1)
             image_norm = self.normalize(image)
-            img1, img2 = self.transform(image_norm)
-
-            img1 = self.img_color(img1.unsqueeze(1)).squeeze(1)
-            img2 = self.img_color(img2.unsqueeze(1)).squeeze(1)
-            # img1 = self.img_color(img1).unsqueeze(1)
-            # img2 = self.img_color(img2).unsqueeze(1)
+                                     
             
-            # print("img1 shape: {}".format(img1.shape))
-            return img1, img2, self.slice_position[index], self.partition[index]
-        elif self.mode == 'finetune':
-            if self.purpose == 'train':
-                image  = data[:4, :].squeeze(1)
-                image_norm = self.normalize(image)
-                img, _ = self.transform(image_norm)
-                img = self.img_color(img.unsqueeze(1)).squeeze(1)
-                label = data[4, :]
-                label.long().squeeze(0)
-                return img, label
-            elif self.purpose == 'val':
-
-                image  = data[:4, :].squeeze(1)
-                image_norm = self.normalize(image)
-                label = data[4, :]
+            if self.JCL_version2:
+                img1 = self.img_color(image_norm.unsqueeze(1)).squeeze(1)
+                img2 = self.img_color(image_norm.unsqueeze(1)).squeeze(1)
                 
-                label.long().squeeze(0)
+                img3, img4 = self.transform(image_norm)
+                
+                                   
+                
+                                              
+
+                img3 = self.img_color(img3.unsqueeze(1)).squeeze(1)
+                img4 = self.img_color(img4.unsqueeze(1)).squeeze(1)
+                
+                return img1, img2, img3, img4, self.slice_position[index], self.partition[index]
             
-            return image_norm, label 
+            elif self.superpixel:
+
+                img1 = self.img_color(image_norm.unsqueeze(1)).squeeze(1)
+                img2 = self.img_color(image_norm.unsqueeze(1)).squeeze(1)
+                                   
+                                  
+
+                if self.sp_method == 'SLIC':
+                    SS_map1 = slic(np.stack([img1[1], img1[1], img1[1]], axis=2), n_segments=self.n_segments, compactness=self.compactness)
+                    SS_map2 = slic(np.stack([img2[1], img2[1], img2[1]], axis=2), n_segments=self.n_segments, compactness=self.compactness)
+                                          
+                                               
+                                      
+                
+                elif self.sp_method in ['SH']:
+                    if self.level_num >= 1:
+                        SS_map1 = Image.open(self.sp_map[index]).convert('L')
+                        SS_map1 = np.asarray(SS_map1)
+                        
+                            
+                        
+                                                   
+
+
+                    if self.level_num >=2:
+                        SS_map2 = Image.open(self.sp_map_2[index]).convert('L')
+                        SS_map2 = np.asarray(SS_map2)
+                        h,w = SS_map2.shape
+                        
+                                                   
+                        
+                    if self.level_num >=3:
+                        SS_map3 = Image.open(self.sp_map_3[index]).convert('L')
+                        SS_map3 = np.asarray(SS_map3)
+                        h,w = SS_map3.shape
+                        
+
+                img3, img4 = self.transform(image_norm)
+                
+                                   
+                
+                                              
+
+                img3 = self.img_color(img3.unsqueeze(1)).squeeze(1)
+                img4 = self.img_color(img4.unsqueeze(1)).squeeze(1)
+
+                if self.sp_method in ['SH']:
+                    if self.level_num == 1:
+                        return img1, img2, img3, img4, SS_map1, self.slice_position[index], self.partition[index]
+                    if self.level_num == 2:
+                        return img1, img2, img3, img4, SS_map1, SS_map2, self.slice_position[index], self.partition[index]
+                    if self.level_num == 3:
+                        return img1, img2, img3, img4, SS_map1, SS_map2, SS_map3, self.slice_position[index], self.partition[index]
+                
+                else:
+                
+                    return img1, img2, img3, img4, SS_map1, SS_map2, self.slice_position[index], self.partition[index]
+
+
+            else:
+                
+                img1, img2 = self.transform(image_norm)
+                
+                                   
+                
+                                              
+
+                img1 = self.img_color(img1.unsqueeze(1)).squeeze(1)
+                img2 = self.img_color(img2.unsqueeze(1)).squeeze(1)
+                                                          
+                                                          
+                
+                                                            
+                return img1, img2, self.slice_position[index], self.partition[index]
+        elif self.mode == 'finetune':
+            if self.ssl_method in ['LPCL']:
+                image  = data[:4, :].squeeze(1)
+                image_norm = self.normalize(image)
+
+                img1 = self.img_color(image_norm.unsqueeze(1)).squeeze(1)
+                img2 = self.img_color(image_norm.unsqueeze(1)).squeeze(1)
+
+                label = data[4, :]
+                label.long().squeeze(0)
+                                    
+                                  
+                img3, img4 = self.transform(image_norm)
+
+                img3 = self.img_color(img3.unsqueeze(1)).squeeze(1)
+                img4 = self.img_color(img4.unsqueeze(1)).squeeze(1)
+
+                return img1, img2, img3, img4, label, self.slice_position[index], self.partition[index]
+
+            else:
+                if self.purpose == 'train':
+                    image  = data[:4, :].squeeze(1)
+                    image_norm = self.normalize(image)
+                    img, _ = self.transform(image_norm)
+                    img = self.img_color(img.unsqueeze(1)).squeeze(1)
+                    label = data[4, :]
+                    label.long().squeeze(0)
+                    return img, label
+                elif self.purpose == 'val':
+
+                    image  = data[:4, :].squeeze(1)
+                    image_norm = self.normalize(image)
+                    label = data[4, :]
+                    
+                    label.long().squeeze(0)
+                    raise ValueError
+                
+                return image_norm, label 
             
 
         
 if __name__ == '__main__':
     dataset = BraTS(args=None)
     dataloader = DataLoader(dataset=dataset, batch_size=1, num_workers=0)
-    for id, data in tqdm(enumerate(dataloader), total=len(dataloader), ncols=80): #ncols进度条的字符宽度
+    for id, data in tqdm(enumerate(dataloader), total=len(dataloader), ncols=80):               
         pass

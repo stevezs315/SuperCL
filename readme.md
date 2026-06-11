@@ -43,7 +43,8 @@ SuperCL builds upon a standard CL framework with two branches:
 
 1. **Spatial Invariance Group** → pixel-level projection → **ILCP** → $\mathcal{L}_{intra}$
 2. **Spatial Variance Group** → instance-level projection → **IGCP** → $\mathcal{L}_{inter}$ 
-<!-- ($\mathcal{L}_{ins}$ as baseline CL loss) -->
+
+($\mathcal{L}_{ins}$ as baseline CL loss)
 
 The total loss is:
 
@@ -54,8 +55,6 @@ $$\mathcal{L}*{total} = \lambda_1 \mathcal{L}*{ins} + \lambda_2 \mathcal{L}*{int
 - **ILCP**: Uses SLIC superpixel map to generate pseudo masks; pixels in the same superpixel cluster are treated as positive pairs
 - **ASP** (Average SuperPixel Feature Map Generation): Generates a reliable representation for inter-image affinity computation
 - **CCL** (Connected Components Label Generation): Generates a weak label via nearest-neighbor graph and Hoshen-Kopelman algorithm
-
----
 
 ---
 
@@ -83,7 +82,7 @@ pip install -r requirements.txt
 
 ## Model Weights
 
-Pre-trained model weights: 'SuperCL/model_pth'
+Pre-trained model weights: *'SuperCL/model_pth'*
 
 
 | Model         | Pre-train Dataset             | Backbone |
@@ -198,27 +197,24 @@ train_contrast.py --device cuda:0 \
 *bash finetune.sh*
 
 ```bash
-# Fine-tune on ACDC with 10% annotations
-python finetune.py \
-    --pretrained checkpoints/SuperCL_BraTS/pretrained.pth \
-    --dataset ACDC \
-    --data_path data/downstream/ACDC \
-    --output_dir output/SuperCL_ACDC_10pct \
-    --label_ratio 0.1 \
-    --epochs 100 \
-    --batch_size 5 \
-    --lr 5e-4
+# Fine-tune on ACDC with 10% / 25% annotations
+samples=("8" "20") # 8, 20
+for sample in "${samples[@]}";
+do
+echo "sample=${sample}";
+CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nnodes=1 --nproc_per_node=2 --master_port 24895 \
+train_supervised.py --device cuda:0 --ssl_method GPSCL \
+--pretrained_model_path 'model_pth/SuperCL_CHD.pth' --restart \
+--batch_size 5 --epochs 100 \
+--data_dir "dataset/acdc/out_labeled/" \
+--lr 5e-4 --min_lr 5e-6 --dataset acdc --patch_size 352 352 \
+--experiment_name ACDC_CHD_your_experiment_name_"${sample}"_ --save epochs_100_batchsize_5x2GPU_lr_5e-6-5e-4 \
+--initial_filter_size 32 --classes 4 --enable_few_data --sampling_k "${sample}" \
+--data_split_list data_split_list.txt \
+--parallel DDP --checkpoint_finetune_interval 10 --GPU_Name '0,1' \
+--model_name 'UNet2D_JCL'
+done
 
-# Fine-tune on MMWHS with 25% annotations
-python finetune.py \
-    --pretrained checkpoints/SuperCL_CHD/pretrained.pth \
-    --dataset MMWHS \
-    --data_path data/downstream/MMWHS \
-    --output_dir output/SuperCL_MMWHS_25pct \
-    --label_ratio 0.25 \
-    --epochs 100 \
-    --batch_size 5 \
-    --lr 5e-4
 ```
 
 ## Project Structure
@@ -226,26 +222,37 @@ python finetune.py \
 ```
 SuperCL/
 ├── assets/               # Figures and illustrations
-├── checkpoints/          # Pre-trained model weights
-├── data/                 # Dataset directory
-├── models/
-│   ├── unet.py           # UNet backbone
-│   ├── supercl.py        # SuperCL pre-training framework
-│   └── modules/
-│       ├── ilcp.py       # Intra-image Local Contrastive Pairs
-│       ├── igcp.py       # Inter-image Global Contrastive Pairs
-│       ├── asp.py        # Average SuperPixel Feature Map Generation
-│       └── ccl.py        # Connected Components Label Generation
-├── datasets/             # Dataset loaders
-├── utils/
-│   ├── superpixel.py     # SLIC superpixel generation
-│   └── losses.py         # Contrastive loss functions
-├── scripts/              # Evaluation and training scripts
-├── pretrain.py           # Pre-training entry point
-├── finetune.py           # Fine-tuning entry point
-├── eval.py               # Evaluation entry point
+├── dataset/              # Dataset loaders and preprocessing scripts
+│   ├── acdc.py           # ACDC dataset loader
+│   ├── BraTS.py          # BraTS dataset loader
+│   ├── chd.py            # CHD dataset loader
+│   ├── KiTS.py           # KiTS dataset loader
+│   ├── MSD.py            # MSD dataset loader
+│   ├── CHAOS.py          # CHAOS dataset loader
+│   ├── ISIC.py           # ISIC dataset loader
+│   ├── hvsmr.py          # HVSMR dataset loader
+│   ├── mmwhs.py          # MMWHS dataset loader
+│   ├── augmentation.py   # Data augmentation utilities
+│   └── generate_*.py     # Dataset preprocessing/generation scripts
+├── loss/
+│   └── contrast_loss.py  # Contrastive learning losses
+├── network/
+│   └── unet2d.py         # 2D UNet backbone and variants
+├── model_pth/            # Released SuperCL pre-trained weights
+├── results/              # Evaluation outputs
+├── runs/                 # Training logs and TensorBoard runs
+├── train_contrast.py     # SuperCL pre-training entry point
+├── train_supervised.py   # Fine-tuning / supervised training entry point
+├── evaluation.py         # Evaluation entry point
+├── pretrain.sh           # Pre-training command examples
+├── finetune.sh           # Fine-tuning command examples
+├── myconfig.py           # Experiment configuration
+├── utils.py              # Training, validation, and superpixel utilities
+├── metrics.py            # Segmentation metrics
+├── lr_scheduler.py       # Learning-rate schedulers
+├── data_split_list.txt   # Few-shot split definition
 ├── requirements.txt
-└── README.md
+└── readme.md
 ```
 
 ---

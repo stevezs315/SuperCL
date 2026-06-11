@@ -23,7 +23,7 @@ class ACDC(Dataset):
         self.pixel_use = args.pixel_use
         self.files = []
         if self.do_contrast:
-            # we do not pre-load all data, instead, load data in the get item function
+                                                                                      
             self.slice_position = []
             self.partition = []
             self.slices = []
@@ -54,7 +54,7 @@ class ACDC(Dataset):
         if not self.do_contrast:
             img = self.files[index][0].astype(np.float32)
             label = self.files[index][1]
-            # print("img shape: {}".format(img.shape))
+                                                      
             img, label = self.prepare_supervised(img, label)
             return img, label
         else:
@@ -63,13 +63,13 @@ class ACDC(Dataset):
             img1, img2 = self.prepare_contrast(img, index)
             return img1, img2, self.slice_position[index], self.partition[index]
             
-    # this function for normal supervised training
+                                                  
     def prepare_supervised(self, img, label):
         if self.purpose == 'train':
-            # resize image
+                          
             img, coord = pad_and_or_crop(img, self.patch_size, mode='random')
             label, _  = pad_and_or_crop(label, self.patch_size, mode='fixed', coords=coord)
-            # the image and label should be [batch, c, x, y, z], this is the adapatation for using batchgenerators :)
+                                                                                                                     
             data_dict = {'data':img[None, None], 'seg':label[None, None]}
             tr_transforms = []
             tr_transforms.append(MirrorTransform((0, 1)))
@@ -86,36 +86,36 @@ class ACDC(Dataset):
             return img, label
            
         else:
-            # resize image
+                          
             img, coord = pad_and_or_crop(img, self.patch_size, mode='centre')
             label, _  = pad_and_or_crop(label, self.patch_size, mode='fixed', coords=coord)
             return img[None], label[None]
 
-    # use this function for contrastive learning
+                                                
     def prepare_contrast(self, img, index):
-        # resize image
+                      
         if self.pixel_use:
         
             img = torch.from_numpy(img)
             img = img.unsqueeze(0).unsqueeze(0)
-            # print("img shape: {}".format(img.shape))
+                                                      
             img = F.interpolate(img, size=self.patch_size, mode='bilinear', align_corners=False)
-            # print("img shape: {}".format(img.shape))
+                                                      
             img = img.squeeze().numpy()
-            # img_temp = img
-            # img_temp = (img_temp - np.min(img_temp))/(np.max(img_temp) - np.min(img_temp))
-            # # print(torch.max(img_temp))
-            # # print(torch.min(img_temp))
-            # # breakpoint()
-            # img_array = (img_temp * 255)
-            # img_label = Image.fromarray(img_array.astype(np.uint8))
-            # if not os.path.exists('./reconstruct/'):
-            #     os.makedirs('./reconstruct')
-            # img_label.save(f'./reconstruct/resize_{index}.png')
+                            
+                                                                                            
+                                          
+                                          
+                            
+                                          
+                                                                     
+                                                      
+                                              
+                                                                 
             
         else:
             img, coord = pad_and_or_crop(img, self.patch_size, mode='random')
-        # the image and label should be [batch, c, x, y, z], this is the adapatation for using batchgenerators :)
+                                                                                                                 
         data_dict = {'data':img[None, None]}
         tr_transforms = []
         tr_transforms.append(MirrorTransform((0, 1)))
@@ -143,35 +143,35 @@ def ACDC_3D_json(train_keys, test_keys, args, fold):
         all_train_files = []
         data_dir = args.data_dir 
         out_folder = "/mnt/nasv3/zs/JCL/dataset/"
-        # train
+               
         for key in train_keys:
             path = os.path.join(data_dir, 'patient%03d'%key)
             patient_dirs_train = os.listdir(path)
-            # print(patient_dirs_train)
+                                       
             data_files_train = [i for i in patient_dirs_train if i.find("_gt") == -1 and i.find("_4d") == -1 and i.find("cfg") == -1]
             corresponding_seg_files = [i[:-7] + "_gt.nii.gz" for i in data_files_train]
-            # print("train: {}".format(data_files_train))
-            # print("ground truth: {}".format(corresponding_seg_files))
+                                                         
+                                                                       
             for d, s in zip(data_files_train, corresponding_seg_files):
                     patient_identifier = d.split("/")[-1][:-7]
                     all_train_files.append(patient_identifier + "_0000.nii.gz")
             
-        #print("train_file: {}".format(all_train_files))
+                                                        
         
         all_test_files = []  
         for key in test_keys:
             path = os.path.join(data_dir, 'patient%03d'%key)
             patient_dirs_test = os.listdir(path)
-            # print(patient_dirs_test)
+                                      
             data_files_test = [i for i in patient_dirs_test if i.find("_gt") == -1 and i.find("_4d") == -1 and i.find("cfg") == -1]
             corresponding_seg_files = [i[:-7] + "_gt.nii.gz" for i in data_files_test]
-            # print("train: {}".format(data_files_test))
-            # print("ground truth: {}".format(corresponding_seg_files))
+                                                        
+                                                                       
             for d, s in zip(data_files_test, corresponding_seg_files):
                     patient_identifier = d.split("/")[-1][:-7]
                     all_test_files.append(patient_identifier + "_0000.nii.gz")
             
-        #print("test_file: {}".format(all_test_files))   
+                                                         
         
         print("prefix: {}".format([i.split("/")[0][:10] for i in all_train_files]))
         
@@ -195,8 +195,8 @@ def ACDC_3D_json(train_keys, test_keys, args, fold):
         }
         json_dict['numTraining'] = len(all_train_files)
         json_dict['numTest'] = len(all_test_files)
-        # json_dict['training'] = [{'image': "./imagesTr/%s.nii.gz" % i.split("/")[-1][:-12], "label": "./labelsTr/%s.nii.gz" % i.split("/")[-1][:-12]} for i in
-        #                         all_train_files]
+                                                                                                                                                                
+                                                  
         
         json_dict['training'] = [{'image': "{}/{}/{}.nii.gz".format(data_dir, i.split("/")[0][:10], i.split("/")[-1][:-12]), "label": "{}/{}/{}.nii.gz".format(data_dir, i.split("/")[0][:10], i.split("/")[-1][:-12])} for i in
                                 all_train_files]
@@ -205,20 +205,20 @@ def ACDC_3D_json(train_keys, test_keys, args, fold):
 
         save_json(json_dict, os.path.join(out_folder, "ACDC_3D_fold{}.json".format(fold)))
 
-        # create a dummy split (patients need to be separated)
-        # splits = []
-        # patients = np.unique([i[:10] for i in all_train_files])
-        # patientids = [i[:-12] for i in all_train_files]
+                                                              
+                     
+                                                                 
+                                                         
 
-        # kf = KFold(5, True, 12345)
-        # for tr, val in kf.split(patients):
-        #     splits.append(OrderedDict())
-        #     tr_patients = patients[tr]
-        #     splits[-1]['train'] = [i[:-12] for i in all_train_files if i[:10] in tr_patients]
-        #     val_patients = patients[val]
-        #     splits[-1]['val'] = [i[:-12] for i in all_train_files if i[:10] in val_patients]
+                                    
+                                            
+                                          
+                                        
+                                                                                               
+                                          
+                                                                                              
 
-        # save_pickle(splits, "./ACDC_splits_final.pkl")
+                                                        
 
     
         
@@ -228,7 +228,7 @@ def ACDC_3D_json(train_keys, test_keys, args, fold):
 if __name__ == "__main__":
     import argparse 
     parser = argparse.ArgumentParser()
-    # parser.add_argument("--data_dir", type=str, default="d:/data/acdc/acdc_contrastive/contrastive/2d/")
+                                                                                                          
     parser.add_argument("--data_dir", type=str, default="/afs/crc.nd.edu/user/d/dzeng2/data/acdc/acdc_contrastive/contrastive/2d/")
     parser.add_argument("--patch_size", type=tuple, default=(352, 352))
     parser.add_argument("--classes", type=int, default=4)
@@ -249,10 +249,10 @@ if __name__ == "__main__":
         print(f'the {batch_idx}th/{len(train_dataloader)} minibatch...')
         img1, img2, slice_position, partition = tup
         batch_size = img1.shape[0]
-        # print(f'batch_size:{batch_size}, slice_position:{slice_position}')
+                                                                            
         slice_position = slice_position.contiguous().view(-1, 1)
         mask = (torch.abs(slice_position.T.repeat(batch_size, 1) - slice_position.repeat(1,batch_size)) < args.slice_threshold).float()
-        # count how many positive pair in each batch
+                                                    
         for i in range(batch_size):
             pp.append(2*mask[i].sum()-1)
     pp = np.asarray(pp)

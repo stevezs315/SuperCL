@@ -25,60 +25,60 @@ class MSD(Dataset):
         self.partition = []
         self.do_contrast = args.do_contrast
         self.task_name = args.task_name
-        # self.imgs = glob(os.path.join(self.data_dir, 'imgs', '*.jpg'))
-        # self.labels = glob(os.path.join(self.data_dir, 'masks', '*.png'))
+                                                                        
+                                                                           
         
         if self.do_contrast:
             raise ValueError
             pass
-            # for key in keys:
-            #     prefix = os.path.join(self.data_dir, 'patinet{}'.format(key), 'raw', 'labeled')
-            #     img_frames = os.listdir(prefix) 
+                              
+                                                                                                 
+                                                  
 
-            #     # print(prefix)
-            #     # print(len(img_frames))
-            #     # raise ValueError
+                                 
+                                          
+                                    
                 
-            #     assert len(img_frames) != 0
-            #     img_frames.sort()
+                                             
+                                   
                 
-            #     for i in range(0, len(img_frames)):
-            #         self.imgs.append(os.path.join(prefix, img_frames[i]))
-            #         self.slice_position.append(float(i+1)/len(img_frames))
-            #         part = len(img_frames) / 4.0
-            #         if part - int(part) >= 0.5:
-            #             part = int(part + 1)
-            #         else:
-            #             part = int(part)
-            #         self.partition.append(max(0,min(int(i//part),3)+1))
+                                                     
+                                                                           
+                                                                            
+                                                  
+                                                 
+                                              
+                           
+                                          
+                                                                         
         
         else:
 
             for key in keys:
-                #img
+                    
                 prefix_img = os.path.join(self.data_dir, self.task_name, 'images', '{}'.format(key))
                 img_frames = os.listdir(prefix_img)
                 img_frames.sort()
                 
-                # print(prefix_img)
-                # print("img_frames: {}".format(len(img_frames)))
+                                   
+                                                                 
                
                 
-                #label
+                      
                 prefix_label = os.path.join(self.data_dir, self.task_name, 'labels', '{}'.format(key))
                 label_frames = os.listdir(prefix_label)
                 label_frames.sort()
                 
-                # print(prefix_img)
-                # print("label frames: {}".format(len(label_frames)))
+                                   
+                                                                     
                 
                 
                 
-                # assert len(img_frames) != 0
-                # assert len(img_frames) == len(label_frames)
-                # print(prefix)
-                # print(len(img_frames))
-                # raise ValueError
+                                             
+                                                             
+                               
+                                        
+                                  
                 
                 
                 
@@ -113,12 +113,12 @@ class MSD(Dataset):
             label = Image.open(self.labels[index])
             label = np.array(label).astype(np.float32)
             
-            # print(label)
-            # print(np.unique(label))
-            # raise ValueError
+                          
+                                     
+                              
             
-            #一定要看看数据有没有归一化！！！
-            # label = label / 255.0
+                             
+                                   
             if self.task_name == 'Task05_Prostate':
                 img1, _ = self.prepare_supervised(image[0,:,:], label)
                 img2, label = self.prepare_supervised(image[1,:,:], label)
@@ -139,10 +139,10 @@ class MSD(Dataset):
     
     def prepare_supervised(self, img, label):
         if self.purpose == 'train':
-            # pad image
+                       
             img, coord = pad_and_or_crop(img, self.patch_size, mode='random')
             label, _  = pad_and_or_crop(label, self.patch_size, mode='fixed', coords=coord)
-            # the image and label should be [batch, c, x, y, z], this is the adapatation for using batchgenerators :)
+                                                                                                                     
             data_dict = {'data':img[None, None], 'seg':label[None, None]}
             tr_transforms = []
             tr_transforms.append(MirrorTransform((0, 1)))
@@ -158,16 +158,16 @@ class MSD(Dataset):
             label = data_dict.get('seg')[0]
             return img, label
         else:
-            # resize image
+                          
 
             img, coord = pad_and_or_crop(img, self.patch_size, mode='centre')
             label, _  = pad_and_or_crop(label, self.patch_size, mode='fixed', coords=coord)
             return img[None], label[None]
     def prepare_contrast(self, img):
-        # resize image
+                      
         img, coord = pad_and_or_crop(img, self.patch_size, mode='random')
-        # the image and label should be [batch, c, x, y, z], this is the adapatation for using batchgenerators :)
-        # print("img :{}".format(img.shape))
+                                                                                                                 
+                                            
         data_dict = {'data':img[None, None]}
         tr_transforms = []
         tr_transforms.append(MirrorTransform((0, 1)))
@@ -183,7 +183,7 @@ class MSD(Dataset):
         data_dict2 = train_transform(**data_dict)
         img2 = data_dict2.get('data')[0]
 
-        # print("img1 :{}".format(img1.shape))
-        # print("img2 :{}".format(img2.shape))
-        # breakpoint()
+                                              
+                                              
+                      
         return img1, img2

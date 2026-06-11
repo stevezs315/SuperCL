@@ -4,17 +4,17 @@ import matplotlib.pyplot as plt
 def pad_if_too_small(image, new_shape, pad_value=None):
   shape = tuple(list(image.shape))
   
-  # print(np.concatenate((shape, new_shape)))
-  # print(np.concatenate((shape, new_shape)).reshape((2, len(shape))))
-  # print("final: {}".format(np.max(np.concatenate((shape, new_shape)).reshape((2, len(shape))), axis=0)))
+                                             
+                                                                      
+                                                                                                          
   
-  # if len(shape) == 2:
-  #   new_shape = tuple(np.max(np.concatenate((shape, new_shape)).reshape((2, len(shape))), axis=0))
-  # elif len(shape) == 3:
-  #   new_shape = tuple(np.max(np.concatenate((shape, new_shape)).reshape((2*shape[0], len(shape))), axis=0))
+                       
+                                                                                                    
+                         
+                                                                                                             
   new_shape = tuple(np.max(np.concatenate((shape, new_shape)).reshape((2, len(shape))), axis=0))
-  # print(new_shape)
-  # print(len(shape))
+                    
+                     
 
   if pad_value is None:
       if len(shape) == 2:
@@ -70,12 +70,12 @@ def pad_and_or_crop(orig_data, new_shape, mode=None, coords=None):
 def matplotlib_imshow(img, one_channel=False):
     if one_channel:
         img = img.mean(dim=0)
-    # img = img / 2 + 0.5     # unnormalize
+                                           
     npimg = img.numpy()
     if one_channel:
         plt.imshow(npimg)
     else:
-        # use this function if image is grayscale
+                                                 
         plt.imshow(npimg[0,:,:],'gray')
-        # use this function if image is RGB
-        # plt.imshow(np.transpose(npimg, (1, 2, 0)))
+                                           
+                                                    

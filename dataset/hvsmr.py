@@ -29,32 +29,32 @@ class HVSMR(Dataset):
     def __getitem__(self, index):
         img = np.load(self.files[index])[0].astype(np.float32)
         label = np.load(self.files[index])[1].astype(np.float32)
-        # print("img shape: {}".format(img.shape))
-        # if not self.result_validation:
-        #     img, label = self.prepare_supervised(img, label)
-        #     return img, label
-        # else:
-        #     padding_img, padding_label = self.prepare_supervised(img, label)
-        #     return img, label, padding_img, padding_label 
+                                                  
+                                        
+                                                              
+                               
+               
+                                                                              
+                                                            
         img, label = self.prepare_supervised(img, label)
         
         return img, label
-        # print(f'finish transform {self.files[index]}')
-        # print("img shape: {}".format(img.shape))
-        # img = (img - np.min(img))/(np.max(img) - np.min(img))
-        # img = (img*255).astype(np.uint8)
-        # img = Image.fromarray(np.transpose(np.array(img), (1,2,0)))
-        # img.save("visualization/img.png")
-        # raise ValueError
+                                                        
+                                                  
+                                                               
+                                          
+                                                                     
+                                           
+                          
         
             
-    # this function for normal supervised training
+                                                  
     def prepare_supervised(self, img, label):
         if self.purpose == 'train':
-            # resize image
+                          
             img, coord = pad_and_or_crop(img, self.patch_size, mode='random')
             label, _  = pad_and_or_crop(label, self.patch_size, mode='fixed', coords=coord)
-            # the image and label should be [batch, c, x, y, z], this is the adapatation for using batchgenerators :)
+                                                                                                                     
             data_dict = {'data':img[None, None], 'seg':label[None, None]}
             tr_transforms = []
             tr_transforms.append(MirrorTransform((0, 1)))
@@ -70,7 +70,7 @@ class HVSMR(Dataset):
             label = data_dict.get('seg')[0]
             return img, label
         else:
-            # resize image
+                          
             img, coord = pad_and_or_crop(img, self.patch_size, mode='centre')
             label, _  = pad_and_or_crop(label, self.patch_size, mode='fixed', coords=coord)
             return img[None], label[None]
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     from torch.autograd import Variable
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_dir", type=str, default="d:/data/hvsmr/preprocessed")
-    # parser.add_argument("--data_dir", type=str, default="/afs/crc.nd.edu/user/d/dzeng2/data/hvsmr/preprocessed")
+                                                                                                                  
     parser.add_argument("--patch_size", type=tuple, default=(320, 320))
     parser.add_argument("--classes", type=int, default=4)
     args = parser.parse_args()

@@ -25,8 +25,8 @@ class CHAOS(Dataset):
         self.slice_position = []
         self.partition = []
         self.modal = args.modal
-        # self.imgs = glob(os.path.join(self.data_dir, 'imgs', '*.jpg'))
-        # self.labels = glob(os.path.join(self.data_dir, 'masks', '*.png'))
+                                                                        
+                                                                           
 
         for key in keys:
             if self.modal == 'MR':
@@ -39,13 +39,13 @@ class CHAOS(Dataset):
             
             img_frames.sort()
             label_frames.sort()
-            # assert len(img_frames) == len(label_frames)
-            for i in range(0, len(img_frames)): #len(img_frames)
-                # print(img_frames[i])
-                # print(label_frames[i])
-                # prefix1 = img_frames[i].split(".")[0]
-                # prefix2 = label_frames[i].split(".")[0]
-                # assert prefix1 == prefix2, f"Prefix mismatch: '{prefix1}' does not match '{prefix2}'."
+                                                         
+            for i in range(0, len(img_frames)):                 
+                                      
+                                        
+                                                       
+                                                         
+                                                                                                        
                 self.imgs.append(os.path.join(self.data_dir, 'MR', '{}'.format(key), 'T2SPIR', 'DICOM_anon', img_frames[i]))
                 self.labels.append(os.path.join(self.data_dir, 'MR', '{}'.format(key), 'T2SPIR', 'Ground', label_frames[i]))
                 
@@ -67,32 +67,32 @@ class CHAOS(Dataset):
             
             return img1, img2, self.slice_position[index], self.partition[index]
         else:
-            # image = Image.open(self.imgs[index])
-            # image = np.array(image).astype(np.float32)
+                                                  
+                                                        
             if self.modal == 'MR':
                 ds = pydicom.read_file(self.imgs[index])
                 img = ds.pixel_array
                 image = (img / img.max()).astype(np.float32)
-                # print(np.max(img))
-                # print(np.min(img))
-                # raise ValueError
+                                    
+                                    
+                                  
 
                 label = Image.open(self.labels[index])
                 
                 label = np.array(label)
                 
                 label_new = np.zeros(label.shape)
-                #liver
+                      
                 label_new[label == 63] = 1
-                #right kidney
+                             
                 label_new[label == 126] = 2
-                #left kidney
+                            
                 label_new[label == 189] = 3
-                #spleen
+                       
                 label_new[label == 252] = 4
                 
                 label_new = label_new.astype(np.float32)
-            #一定要看看数据有没有归一化！！！
+                             
             img, label = self.prepare_supervised(image, label_new)
             return img, label
 
@@ -102,10 +102,10 @@ class CHAOS(Dataset):
     
     def prepare_supervised(self, img, label):
         if self.purpose == 'train':
-            # pad image
+                       
             img, coord = pad_and_or_crop(img, self.patch_size, mode='random')
             label, _  = pad_and_or_crop(label, self.patch_size, mode='fixed', coords=coord)
-            # the image and label should be [batch, c, x, y, z], this is the adapatation for using batchgenerators :)
+                                                                                                                     
             data_dict = {'data':img[None, None], 'seg':label[None, None]}
             tr_transforms = []
             tr_transforms.append(MirrorTransform((0, 1)))
@@ -121,16 +121,16 @@ class CHAOS(Dataset):
             label = data_dict.get('seg')[0]
             return img, label
         else:
-            # resize image
+                          
 
             img, coord = pad_and_or_crop(img, self.patch_size, mode='centre')
             label, _  = pad_and_or_crop(label, self.patch_size, mode='fixed', coords=coord)
             return img[None], label[None]
     def prepare_contrast(self, img):
-        # resize image
+                      
         img, coord = pad_and_or_crop(img, self.patch_size, mode='random')
-        # the image and label should be [batch, c, x, y, z], this is the adapatation for using batchgenerators :)
-        # print("img :{}".format(img.shape))
+                                                                                                                 
+                                            
         data_dict = {'data':img[None, None]}
         tr_transforms = []
         tr_transforms.append(MirrorTransform((0, 1)))
@@ -146,7 +146,7 @@ class CHAOS(Dataset):
         data_dict2 = train_transform(**data_dict)
         img2 = data_dict2.get('data')[0]
 
-        # print("img1 :{}".format(img1.shape))
-        # print("img2 :{}".format(img2.shape))
-        # breakpoint()
+                                              
+                                              
+                      
         return img1, img2
