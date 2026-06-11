@@ -54,18 +54,6 @@ $$\mathcal{L}*{total} = \lambda_1 \mathcal{L}*{ins} + \lambda_2 \mathcal{L}*{int
 
 ---
 
-## Table of Contents
-
-- [Installation](#installation)
-- [Model Weight Preparation](#model-weight-preparation)
-- [Data Preparation](#data-preparation)
-- [Training](#training)
-- [Inference](#inference)
-- [Citation](#citation)
-- [Acknowledgements](#acknowledgements)
-
----
-
 ## Installation
 
 ```bash
