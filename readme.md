@@ -1,10 +1,8 @@
 # SuperCL: Superpixel Guided Contrastive Learning for Medical Image Segmentation Pre-Training
 
-
-[![IEEE TIP](https://img.shields.io/badge/IEEE%20TIP-Paper-blue)](https://ieeexplore.ieee.org/abstract/document/11371598)
-[![GitHub](https://img.shields.io/badge/GitHub-SuperCL-black?logo=github)](https://github.com/stevezs315/SuperCL)
-[![Homepage](https://img.shields.io/badge/-Homepage-brightgreen?logo=github)](https://stevezs315.github.io/)
-
+[IEEE TIP](https://ieeexplore.ieee.org/abstract/document/11371598)
+[GitHub](https://github.com/stevezs315/SuperCL)
+[Homepage](https://stevezs315.github.io/)
 
 **Shuang Zeng, Lei Zhu, Xinliang Zhang, Hangzhou He, Yanye Lu***
 
@@ -37,14 +35,12 @@ We propose **SuperCL**, a novel contrastive learning framework for medical image
 
 ## Method Overview
 
-![Method Overview](assets/VALSE.png)
+Method Overview
 
 SuperCL builds upon a standard CL framework with two branches:
 
 1. **Spatial Invariance Group** → pixel-level projection → **ILCP** → $\mathcal{L}_{intra}$
-2. **Spatial Variance Group** → instance-level projection → **IGCP** → $\mathcal{L}_{inter}$ 
-
-($\mathcal{L}_{ins}$ as baseline CL loss)
+2. **Spatial Variance Group** → instance-level projection → **IGCP** → $\mathcal{L}_{inter}$
 
 The total loss is:
 
@@ -99,9 +95,9 @@ Pre-trained model weights: *'SuperCL/model_pth'*
 ### Pre-training Datasets (Upstream, Unlabeled)
 
 
-| Dataset   | Modality | Size                        | Usage                                |
-| --------- | -------- | --------------------------- | ------------------------------------ |
-| CHD       | CT       | 17525 slices   | Multi-organ CT pre-training        |
+| Dataset   | Modality | Size         | Usage                                |
+| --------- | -------- | ------------ | ------------------------------------ |
+| CHD       | CT       | 17525 slices | Multi-organ CT pre-training          |
 | BraTS2018 | MRI      | 39064 slices | MRI (Multi-organ / ROI) pre-training |
 | KiTS2019  | CT       | 32332 slices | ROI CT pre-training                  |
 
@@ -124,12 +120,13 @@ Pre-trained model weights: *'SuperCL/model_pth'*
 | MSD-Spleen      | CT         | ROI (Spleen)                 | 41 patients  |
 | ISIC2018        | Dermoscopy | ROI (Skin lesion)            | 2594 images  |
 
- - ACDC, [link](https://www.creatis.insa-lyon.fr/Challenge/acdc/databases.html)
- - MMWHS, [link](https://zmiclab.github.io/zxh/0/mmwhs/)
- - HVSMR, [link](http://segchd.csail.mit.edu/)
- - CHAOS, [link](https://chaos.grand-challenge.org/Combined_Healthy_Abdominal_Organ_Segmentation/)
- - MSD, [link](http://medicaldecathlon.com/)
- - ISIC2018, [link](https://challenge.isic-archive.com/landing/2018/)
+
+- ACDC, [link](https://www.creatis.insa-lyon.fr/Challenge/acdc/databases.html)
+- MMWHS, [link](https://zmiclab.github.io/zxh/0/mmwhs/)
+- HVSMR, [link](http://segchd.csail.mit.edu/)
+- CHAOS, [link](https://chaos.grand-challenge.org/Combined_Healthy_Abdominal_Organ_Segmentation/)
+- MSD, [link](http://medicaldecathlon.com/)
+- ISIC2018, [link](https://challenge.isic-archive.com/landing/2018/)
 
 ### Pre-Processing
 
