@@ -35,7 +35,7 @@ We propose **SuperCL**, a novel contrastive learning framework for medical image
 
 ## Method Overview
 
-Method Overview
+！[Method Overview](assets/VALSE.png)
 
 SuperCL builds upon a standard CL framework with two branches:
 
